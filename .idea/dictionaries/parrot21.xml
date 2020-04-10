@@ -5,6 +5,7 @@
       <w>postag</w>
       <w>postags</w>
       <w>preprocessing</w>
+      <w>vectorizer</w>
       <w>wordnet</w>
     </words>
   </dictionary>
