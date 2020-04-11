@@ -6,11 +6,10 @@ from nltk.tokenize import word_tokenize
 
 enc = enchant.Dict("en_US")
 
-# sentence_separators = [dot, question mark, exclamation mark, colon]
-def find_counts(essays):
+def find_sentence_counts(essays):
     sentence_counts = []
     for i in range(len(essays)):
-        essay = essays['essay'][i]
+        essay = essays[i]
         sentence_count = find_sentence_count(essay)
         sentence_counts.append(sentence_count)
     return sentence_counts
@@ -24,16 +23,24 @@ def find_sentence_count(essay):
     sentence_separators[3] = essay.count(':')
     return sum(sentence_separators)
 
-# find english and non-english word count
+def find_word_counts(essays):
+    word_counts = []
+    for i in range(len(essays)):
+        counts = find_word_count(essays[i])
+        word_counts.append(counts)
+    return word_counts
+
+# find english and non-english word count and postag counts
 def find_word_count(essay):
     words_counts = np.zeros([11, 1], int)
     eng = 0
     non_eng = 0
     labeled = find_labeled_word_count(essay)
-    for i in range(len(essay[0])):
-        if enc.check(essay[0][i]):
+    for i in range(len(essay)):
+        a = essay[i]
+        if enc.check(essay[i]):
             eng = eng + 1
-            tag = find_postag(essay[0][i])
+            tag = find_postag(essay[i])
             tag = str(tag[0][1])
             if tag is 'CC': words_counts[2] = words_counts[2] + 1
             elif tag is 'CD': words_counts[3] = words_counts[3] + 1

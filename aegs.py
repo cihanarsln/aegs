@@ -12,8 +12,13 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('tagsets')
 
 # Read first 1783 essays and scores
-essays = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
-essays = essays.iloc[:1783, :]
+essays_scores = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
+essays_scores = essays_scores.iloc[:1783, :]
+essays = essays_scores['essay']
+
+a = sentence.find_sentence_counts(essays)
+b = preprocessing.remove_stopwords(essays)
+c = sentence.find_word_counts(b)
 
 a = preprocessing.remove_stopwords(essays)
 b = vectorization.find_word_vector(a)
