@@ -32,7 +32,7 @@ def find_word_counts(essays):
 
 # find english and non-english word count and postag counts
 def find_word_count(essay):
-    words_counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    words_counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     eng = 0
     non_eng = 0
     labeled = find_labeled_word_count(essay)

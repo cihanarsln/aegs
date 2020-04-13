@@ -1,8 +1,10 @@
 import pandas as pd
 import nltk
+import numpy as np
 
 import preprocessing
 import sentence
+import vectorization
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -20,20 +22,23 @@ from sklearn import metrics
 essays_scores = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
 essays_scores = essays_scores.iloc[:1783, :]
 essays = essays_scores['essay']
-scores = essays_scores['domain1_score']
+scores1 = essays_scores['rater1_domain1']
+scores2 = essays_scores['rater2_domain1']
 
 a = sentence.find_sentence_counts(essays)
 b = preprocessing.remove_stopwords(essays)
+c = vectorization.find_word_vector(b)
 ds = sentence.find_word_counts(b)
 
 for i in range(len(essays)):
     ds[i][0] = a[i]
-    ds[i][19] = scores[i]
+    ds[i][19] = c[i]
+    ds[i][20] = (scores1[i] + scores2[i])/2
 
-df = DataFrame(ds, columns=['sentence_count', 'english_word', 'non_english_word', 'JJ', 'JJR', 'JJS', 'NN', 'NNP', 'NNS', 'NNPS', 'RB', 'RBR', 'RBS', 'VB', 'VBD', 'VBG', 'VBP', 'VBZ', 'other_tags', 'score'])
+df = DataFrame(ds, columns=['sentence_count', 'english_word', 'non_english_word', 'JJ', 'JJR', 'JJS', 'NN', 'NNP', 'NNS', 'NNPS', 'RB', 'RBR', 'RBS', 'VB', 'VBD', 'VBG', 'VBP', 'VBZ', 'other_tags', 'td_idf', 'score'])
 
-X = df.iloc[:, 0:18].values
-y = df.iloc[:, 19].values
+X = df.iloc[:, 0:19].values
+y = df.iloc[:, 20].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 sc = StandardScaler()
@@ -43,6 +48,8 @@ X_test = sc.transform(X_test)
 regressor = RandomForestRegressor(n_estimators=20, random_state=0)
 regressor.fit(X_train, y_train)
 y_pred = regressor.predict(X_test)
+
+#y_pred = np.round(y_pred)
 
 print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
 print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
