@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 vectorizer = TfidfVectorizer()
 
+# Find sum of the tf-idf values for each essay
 def find_word_vector(essays):
     sentences = []
     for i in range(len(essays)):

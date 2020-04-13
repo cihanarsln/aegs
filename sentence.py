@@ -1,4 +1,3 @@
-import numpy as np
 import enchant
 
 from nltk.tag import pos_tag
@@ -6,6 +5,7 @@ from nltk.tokenize import word_tokenize
 
 enc = enchant.Dict("en_US")
 
+# Find sentence count in essay
 def find_sentence_counts(essays):
     sentence_counts = []
     for i in range(len(essays)):
@@ -30,14 +30,13 @@ def find_word_counts(essays):
         word_counts.append(counts)
     return word_counts
 
-# find english and non-english word count and postag counts
+# find english and non-english word count and tag counts
 def find_word_count(essay):
     words_counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     eng = 0
     non_eng = 0
     labeled = find_labeled_word_count(essay)
     for i in range(len(essay)):
-        a = essay[i]
         if enc.check(essay[i]):
             eng = eng + 1
             tag = find_postag(essay[i])
