@@ -16,16 +16,6 @@ def remove_stopwords(essays):
         temp.append(essay)
     return temp
 
-"""
-def find_word_count_after_removing_stopwords(essay):
-    temp = essay
-    temp = re.sub('[^a-zA-Z0-9@]', ' ', temp)
-    temp = temp.lower()
-    temp = nltk.word_tokenize(temp)
-    temp = [wnl.lemmatize(word) for word in temp if not word in set(stopwords.words('english'))]
-    return len(temp)
-"""
-
 def remove_unnecessary_characters(essay):
     temp = re.sub('[^a-zA-Z0-9\'@]', ' ', essay)
     return temp

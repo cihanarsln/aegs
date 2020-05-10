@@ -3,10 +3,12 @@ import enchant
 from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
+from spellchecker import SpellChecker
 
 import preprocessing
 
 enc = enchant.Dict("en_US")
+spell = SpellChecker()
 
 """
     essay_counts: feature array
@@ -87,6 +89,7 @@ def find_misspelled_word_counts(essay):
         if enc.check(words[i]):
             counts[0] = counts[0] + 1
         else:
+            print(words[i] + "-" + spell.correction(words[i]))
             counts[1] = counts[1] + 1
     return counts
 
