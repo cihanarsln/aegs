@@ -89,9 +89,20 @@ def find_misspelled_word_counts(essay):
         if enc.check(words[i]):
             counts[0] = counts[0] + 1
         else:
-            print(words[i] + "-" + spell.correction(words[i]))
             counts[1] = counts[1] + 1
     return counts
+
+def find_misspelled_word_correction(essay):
+    misspelled_token = ""
+    label = preprocessing.remove_labeled_words(essay)
+    temp = preprocessing.remove_unnecessary_characters_v2(label[0])
+    words = word_tokenize(temp)
+    for i in range(len(words)):
+        if not enc.check(words[i]):
+            word_correction = words[i] + ":" + spell.correction(words[i])
+            misspelled_token += word_correction + ","
+    misspelled_token = misspelled_token[:-1]
+    return misspelled_token
 
 def combine_lists(essay_counts, sentence_count, misspelled_word_count, postag_counts):
     essay_counts[0] = sentence_count

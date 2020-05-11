@@ -86,6 +86,7 @@ def aegs(essay):
     regressor.fit(X_train, y_train)
     # y_pred = regressor.predict(X_test)
     essay_pred = regressor.predict(essay_test)
+    print("dsfd")
     '''
     print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
