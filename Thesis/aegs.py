@@ -4,6 +4,7 @@ import numpy as np
 import preprocessing
 import sentence
 import vectorization
+import topic
 import util
 
 from pandas import DataFrame
@@ -46,6 +47,8 @@ df.to_csv('result.csv', index=False)
 """
 
 def aegs(essay):
+
+    # a = topic.find_topic()
 
     dataframe = pd.read_csv('result.csv', encoding="ISO-8859-1")
     essays_without_stopwords = dataframe.iloc[:, 25].values

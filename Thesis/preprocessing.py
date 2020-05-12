@@ -17,6 +17,17 @@ def remove_stopwords(essays):
         temp.append(essay)
     return temp
 
+def remove_stopwords_v2(essays):
+    temp = []
+    for i in range(len(essays)):
+        essay = re.sub('[^a-zA-Z0-9]', ' ', essays[i])
+        essay = essay.lower()
+        essay = nltk.word_tokenize(essay)
+        essay = [wnl.lemmatize(word) for word in essay if not word in set(stopwords.words('english'))]
+        essay = ' '.join(essay)
+        temp.append(essay)
+    return temp
+
 def remove_unnecessary_characters(essay):
     temp = re.sub('[^a-zA-Z0-9\'@]', ' ', essay)
     return temp
