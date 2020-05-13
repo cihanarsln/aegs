@@ -8,8 +8,7 @@ from pandas import DataFrame
 
 def find_topic(essay):
 
-
-
+    essays_to_csv()
     print("finish")
 
 '''
@@ -18,6 +17,114 @@ def find_topic(essay):
     So store data csv files its faster
 '''
 def essays_to_csv():
+
+    # create_essays_without_stopwords_csv()
+    create_dataset()
+
+
+
+
+def create_dataset():
+    dataset = []
+
+    scores = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
+    scores = scores.iloc[:, 3:5]
+
+    computers = pd.read_csv('essay_computer.csv', encoding="ISO-8859-1")
+    libraries = pd.read_csv('essay_library.csv', encoding="ISO-8859-1")
+    cyclists = pd.read_csv('essay_cyclist.csv', encoding="ISO-8859-1")
+    histories = pd.read_csv('essay_history.csv', encoding="ISO-8859-1")
+    memoirs = pd.read_csv('essay_memoir.csv', encoding="ISO-8859-1")
+    moorings = pd.read_csv('essay_mooring.csv', encoding="ISO-8859-1")
+
+    computers = computers.iloc[:, 0].values
+    libraries = libraries.iloc[:, 0].values
+    cyclists = cyclists.iloc[:, 0].values
+    histories = histories.iloc[:, 0].values
+    memoirs = memoirs.iloc[:, 0].values
+    moorings = moorings.iloc[:, 0].values
+
+    computer_tfidf = vectorization.find_word_vector_v2(computers)
+    library_tfidf = vectorization.find_word_vector_v2(libraries)
+    cyclist_tfidf = vectorization.find_word_vector_v2(cyclists)
+    history_tfidf = vectorization.find_word_vector_v2(histories)
+    memoir_tfidf = vectorization.find_word_vector_v2(memoirs)
+    mooring_tfidf = vectorization.find_word_vector_v2(moorings)
+
+    data = [0, 0, 0, 0, 0, 0, 0, ""]
+    for i in range(len(computers)):
+        data[0] = computer_tfidf[i]
+        data[1] = find_score(libraries, computers[i])
+        data[2] = find_score(cyclists, computers[i])
+        data[3] = find_score(histories, computers[i])
+        data[4] = find_score(memoirs, computers[i])
+        data[5] = find_score(moorings, computers[i])
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "computer"
+        dataset.append(data)
+    for i in range(len(libraries)):
+        data[0] = find_score(computers, libraries[i])
+        data[1] = library_tfidf[i]
+        data[2] = find_score(cyclists, libraries[i])
+        data[3] = find_score(histories, libraries[i])
+        data[4] = find_score(memoirs, libraries[i])
+        data[5] = find_score(moorings, libraries[i])
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "library"
+        dataset.append(data)
+    for i in range(len(cyclists)):
+        data[0] = find_score(computers, cyclists[i])
+        data[1] = find_score(libraries, cyclists[i])
+        data[2] = cyclist_tfidf[i]
+        data[3] = find_score(histories, cyclists[i])
+        data[4] = find_score(memoirs, cyclists[i])
+        data[5] = find_score(moorings, cyclists[i])
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "cyclist"
+        dataset.append(data)
+    for i in range(len(histories)):
+        data[0] = find_score(computers, histories[i])
+        data[1] = find_score(libraries, histories[i])
+        data[2] = find_score(cyclists, histories[i])
+        data[3] = history_tfidf[i]
+        data[4] = find_score(memoirs, histories[i])
+        data[5] = find_score(moorings, histories[i])
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "history"
+        dataset.append(data)
+    for i in range(len(memoirs)):
+        data[0] = find_score(computers, memoirs[i])
+        data[1] = find_score(libraries, memoirs[i])
+        data[2] = find_score(cyclists, memoirs[i])
+        data[3] = find_score(histories, memoirs[i])
+        data[4] = memoir_tfidf[i]
+        data[5] = find_score(moorings, memoirs[i])
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "memoir"
+        dataset.append(data)
+    for i in range(len(moorings)):
+        data[0] = find_score(computers, moorings[i])
+        data[1] = find_score(libraries, moorings[i])
+        data[2] = find_score(cyclists, moorings[i])
+        data[3] = find_score(histories, moorings[i])
+        data[4] = find_score(memoirs, moorings[i])
+        data[5] = mooring_tfidf[i]
+        data[6] = (scores[len(dataset)][0] + scores[len(dataset)][1]) / 2
+        data[7] = "mooring"
+        dataset.append(data)
+
+    df = DataFrame(dataset, columns=['computer', 'library', 'cyclist', 'history', 'memoir', 'mooring', 'score', 'label'])
+    df.to_csv('topic.csv', index=False)
+
+
+
+def find_score(essay, essays):
+    with_essay = np.append(essays, essay)
+    res = vectorization.find_word_vector_v2(with_essay)[-1]
+    return res
+
+
+def create_essays_without_stopwords_csv():
     essays_topic = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
     essays_topic = essays_topic.iloc[:, 1:3]
 
@@ -55,46 +162,3 @@ def essays_to_csv():
     df.to_csv('essay_patience.csv', index=False)
     df = DataFrame(laughters, columns=['essay'])
     df.to_csv('essay_laughter.csv', index=False)
-
-    computer_tfidf = vectorization.find_word_vector_v2(computers)
-    library_tfidf = vectorization.find_word_vector_v2(libraries)
-    cyclist_tfidf = vectorization.find_word_vector_v2(cyclists)
-    history_tfidf = vectorization.find_word_vector_v2(histories)
-    memoir_tfidf = vectorization.find_word_vector_v2(memoirs)
-    mooring_tfidf = vectorization.find_word_vector_v2(moorings)
-    patience_tfidf = vectorization.find_word_vector_v2(patiences)
-    laughter_tfidf = vectorization.find_word_vector_v2(laughters)
-
-    dataset = []
-    create_dataset(dataset, computers, libraries, cyclists, histories, memoirs, moorings, patiences, laughters, computer_tfidf, 'computer')
-    create_dataset(dataset, libraries, computers, cyclists, histories, memoirs, moorings, patiences, laughters, library_tfidf, 'library')
-    create_dataset(dataset, cyclists, computers, libraries, histories, memoirs, moorings, patiences, laughters, cyclist_tfidf, 'cyclist')
-    create_dataset(dataset, histories, computers, libraries, cyclists, memoirs, moorings, patiences, laughters, history_tfidf, 'history')
-    create_dataset(dataset, memoirs, computers, libraries, cyclists, histories, moorings, patiences, laughters, memoir_tfidf, 'memoir')
-    create_dataset(dataset, moorings, computers, libraries, cyclists, histories, memoirs, patiences, laughters, mooring_tfidf, 'mooring')
-    create_dataset(dataset, patiences, computers, libraries, cyclists, histories, memoirs, moorings, laughters, patience_tfidf, 'patience')
-    create_dataset(dataset, laughters, computers, libraries, cyclists, histories, memoirs, moorings, patiences, laughter_tfidf, 'laughter')
-
-    df = DataFrame(dataset, columns=['computer', 'library', 'cyclist', 'history', 'memoir', 'mooring', 'patience', 'laughter', 'label'])
-    df.to_csv('topic.csv', index=False)
-
-def create_dataset(dataset, own, other1, other2, other3, other4, other5, other6, other7, own_tfidf, label):
-    for i in range(len(own)):
-        values = [0, 0, 0, 0, 0, 0, 0, 0, ""]
-        values[0] = own_tfidf[i]
-        with_library = np.append(other1, own[i])
-        values[1] = vectorization.find_word_vector_v2(with_library)[-1]
-        with_cyclist = np.append(other2, own[i])
-        values[2] = vectorization.find_word_vector_v2(with_cyclist)[-1]
-        with_history = np.append(other3, own[i])
-        values[3] = vectorization.find_word_vector_v2(with_history)[-1]
-        with_memoir = np.append(other4, own[i])
-        values[4] = vectorization.find_word_vector_v2(with_memoir)[-1]
-        with_mooring = np.append(other5, own[i])
-        values[5] = vectorization.find_word_vector_v2(with_mooring)[-1]
-        with_patience = np.append(other6, own[i])
-        values[6] = vectorization.find_word_vector_v2(with_patience)[-1]
-        with_laughter = np.append(other7, own[i])
-        values[7] = vectorization.find_word_vector_v2(with_laughter)[-1]
-        values[8] = label
-        dataset.append(values)
