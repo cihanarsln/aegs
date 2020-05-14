@@ -4,12 +4,67 @@ import preprocessing
 import vectorization
 
 from pandas import DataFrame
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
 
 
-def find_topic(essay):
+def find_topic(essay, score):
 
-    essays_to_csv()
-    print("finish")
+    # essays_to_csv()
+    topic = pd.read_csv('topic.csv', encoding="ISO-8859-1")
+
+    # Split train and test sets
+    X = topic.iloc[:5309, :7].values
+    y = topic.iloc[:5309, 7].values
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+    essay_data = find_essay_values(essay, score)
+
+    # Scale values
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    # X_test = sc.transform(X_test)
+    essay_test = sc.transform(essay_data)
+
+    # Classifier
+    model = RandomForestClassifier(n_estimators=100, criterion='entropy', random_state=0)
+    model.fit(X_train, y_train)
+
+    essay_pred = model.predict(essay_test)
+
+    # y_pred = model.predict(X_test)
+    # cm = confusion_matrix(y_test, y_pred)
+    # print(model.score(X_test, y_test))
+
+    return essay_pred[0]
+
+def find_essay_values(essay, score):
+    computers = pd.read_csv('essay_computer.csv', encoding="ISO-8859-1")
+    libraries = pd.read_csv('essay_library.csv', encoding="ISO-8859-1")
+    cyclists = pd.read_csv('essay_cyclist.csv', encoding="ISO-8859-1")
+    histories = pd.read_csv('essay_history.csv', encoding="ISO-8859-1")
+    memoirs = pd.read_csv('essay_memoir.csv', encoding="ISO-8859-1")
+    moorings = pd.read_csv('essay_mooring.csv', encoding="ISO-8859-1")
+
+    computers = computers.iloc[:, :].values
+    libraries = libraries.iloc[:, :].values
+    cyclists = cyclists.iloc[:, :].values
+    histories = histories.iloc[:, :].values
+    memoirs = memoirs.iloc[:, :].values
+    moorings = moorings.iloc[:, :].values
+
+    data = [0, 0, 0, 0, 0, 0, 0]
+    data[0] = find_score(computers, essay)
+    data[1] = find_score(libraries, essay)
+    data[2] = find_score(cyclists, essay)
+    data[3] = find_score(histories, essay)
+    data[4] = find_score(memoirs, essay)
+    data[5] = find_score(moorings, essay)
+    data[6] = score
+
+    return [data]
 
 '''
     Pre_calculated values
@@ -17,18 +72,14 @@ def find_topic(essay):
     So store data csv files its faster
 '''
 def essays_to_csv():
-
-    # create_essays_without_stopwords_csv()
+    create_essays_without_stopwords_csv()
     create_dataset()
-
-
-
 
 def create_dataset():
     dataset = []
 
     scores = pd.read_csv('essays_and_scores.csv', encoding="ISO-8859-1")
-    scores = scores.iloc[:, 3:5]
+    scores = scores.iloc[:, 3:5].values
 
     computers = pd.read_csv('essay_computer.csv', encoding="ISO-8859-1")
     libraries = pd.read_csv('essay_library.csv', encoding="ISO-8859-1")
@@ -51,8 +102,8 @@ def create_dataset():
     memoir_tfidf = vectorization.find_word_vector_v2(memoirs)
     mooring_tfidf = vectorization.find_word_vector_v2(moorings)
 
-    data = [0, 0, 0, 0, 0, 0, 0, ""]
     for i in range(len(computers)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = computer_tfidf[i]
         data[1] = find_score(libraries, computers[i])
         data[2] = find_score(cyclists, computers[i])
@@ -63,6 +114,7 @@ def create_dataset():
         data[7] = "computer"
         dataset.append(data)
     for i in range(len(libraries)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = find_score(computers, libraries[i])
         data[1] = library_tfidf[i]
         data[2] = find_score(cyclists, libraries[i])
@@ -73,6 +125,7 @@ def create_dataset():
         data[7] = "library"
         dataset.append(data)
     for i in range(len(cyclists)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = find_score(computers, cyclists[i])
         data[1] = find_score(libraries, cyclists[i])
         data[2] = cyclist_tfidf[i]
@@ -83,6 +136,7 @@ def create_dataset():
         data[7] = "cyclist"
         dataset.append(data)
     for i in range(len(histories)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = find_score(computers, histories[i])
         data[1] = find_score(libraries, histories[i])
         data[2] = find_score(cyclists, histories[i])
@@ -93,6 +147,7 @@ def create_dataset():
         data[7] = "history"
         dataset.append(data)
     for i in range(len(memoirs)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = find_score(computers, memoirs[i])
         data[1] = find_score(libraries, memoirs[i])
         data[2] = find_score(cyclists, memoirs[i])
@@ -103,6 +158,7 @@ def create_dataset():
         data[7] = "memoir"
         dataset.append(data)
     for i in range(len(moorings)):
+        data = [0, 0, 0, 0, 0, 0, 0, ""]
         data[0] = find_score(computers, moorings[i])
         data[1] = find_score(libraries, moorings[i])
         data[2] = find_score(cyclists, moorings[i])
@@ -120,7 +176,7 @@ def create_dataset():
 
 def find_score(essay, essays):
     with_essay = np.append(essays, essay)
-    res = vectorization.find_word_vector_v2(with_essay)[-1]
+    res = vectorization.find_word_vector_v2(with_essay)[0]
     return res
 
 
