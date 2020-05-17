@@ -62,6 +62,6 @@ def create_pre_calculated_result_csv(start, end, csv_name):
                             'JJS',
                             'MD', 'NN', 'NNS', 'NNP', 'NNPS', 'RB2', 'RBR', 'RBS', 'VB', 'VBD-VBN', 'VBG',
                             'VBP-VBZ',
-                            'other_tags', 'word_count', 'td_idf', 'score', 'essay_wo_stopwords'])
+                            'other_tags', 'word_count', 'td_idf', 'unique', 'score', 'essay_wo_stopwords'])
 
     df.to_csv(csv_name, index=False)
