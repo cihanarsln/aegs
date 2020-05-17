@@ -37,7 +37,7 @@ def remove_unnecessary_characters_v2(essay):
     return temp
 
 def remove_labeled_words(essay):
-    words = word_tokenize(essay)
+    words = nltk.word_tokenize(essay)
     indexes = []
     for i in range(len(words)):
         word = str(words[i])
