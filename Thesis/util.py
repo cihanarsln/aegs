@@ -45,7 +45,8 @@ def create_pre_calculated_result_csv(start, end, csv_name):
     count
     with out stopwords
     [23]: tf - idf
-    [24]: mean
+    [24]: unique word count
+    [25]: mean
     score
     [25]: essay
     without

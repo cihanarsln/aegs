@@ -19,6 +19,6 @@ def find_word_vector_v2(essays):
     x = vectorizer.fit_transform(essays)
     idf = []
     for i in range(x.shape[0]):
-        temp = sum(x[i, :].data)
+        temp = (sum(x[i, :].data), len(x[i, :].data))
         idf.append(temp)
     return idf
