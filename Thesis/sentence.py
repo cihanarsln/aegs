@@ -77,10 +77,10 @@ def find_postag_counts(essay):
         else: postag_counts[18] = postag_counts[18] + 1
     return postag_counts
 
-"""
+'''
     # [True, False]
     # 2 Feature
-"""
+'''
 def find_misspelled_word_counts(essay):
     counts = [0, 0]
     temp = preprocessing.remove_unnecessary_characters_v2(essay)
@@ -92,6 +92,10 @@ def find_misspelled_word_counts(essay):
             counts[1] = counts[1] + 1
     return counts
 
+'''
+    this method create a token which contains misspelled word and their corrections
+    e.g. token = misspelled:correction,misspelled2:correction2
+'''
 def find_misspelled_word_correction(essay):
     misspelled_token = ""
     label = preprocessing.remove_labeled_words(essay)
